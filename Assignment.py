@@ -12,6 +12,7 @@ class Assignment:
         self.service = Assignment.classroom_service
         self.json = self.get_json()
         self.courseId = self.json['courseId']
+        self.title = self.json['title']
         self.submissions = self.get_submissions()
 
 
@@ -44,5 +45,6 @@ class Assignment:
         submissions_list = studentSubmissions['studentSubmissions']
         submissions = []
         for s in submissions_list:
-            submissions.append(Submission(s))
+            if s['state'] != 'NEW':
+                submissions.append(Submission(s))
         return submissions
