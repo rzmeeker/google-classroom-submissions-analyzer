@@ -1,6 +1,7 @@
 from service import get_classroom_service
 import os
 import json
+from Submission import Submission
 
 class Assignment:
 
@@ -40,5 +41,8 @@ class Assignment:
         print('getting submissions')
         studentSubmissions = self.service.courses().courseWork().studentSubmissions().list(courseId=self.courseId,
                                                                                       courseWorkId=self.id).execute()
-        submissions = studentSubmissions['studentSubmissions']
+        submissions_list = studentSubmissions['studentSubmissions']
+        submissions = []
+        for s in submissions_list:
+            submissions.append(Submission(s))
         return submissions
