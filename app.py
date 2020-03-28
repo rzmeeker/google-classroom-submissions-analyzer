@@ -11,7 +11,14 @@ for course in abelCourses:
         course.save_to_cache()
         print(course.name, 'saved to cache for next time!')
     if course.assignments is not None:
+        if course.assignments_cached() is False:
+            print('Assignments being cached now.')
+            course.cache_all_assignments()
+        else:
+            print('Assignments already cached.')
         for assignment in course.assignments:
+            print(assignment)
+            print(assignment['id'])
             submissions = course.get_submissions(assignment['id'])
             for submission in submissions:
                 print(f"For assignment:{assignment['title']} in course: {course.name}")

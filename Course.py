@@ -2,6 +2,7 @@ from service import get_classroom_service
 from Directory import get_user_email_from_id
 import os
 import json
+import Assignment
 
 class Course:
 
@@ -16,13 +17,52 @@ class Course:
 
 
     def get_assignments(self):
+        dir = os.path.dirname(os.path.realpath(__file__))
+        course_dir = os.path.join(dir, 'cache', 'assignments', f'{self.id}')
         print('getting assignments')
-        assignments_packed = self.service.courses().courseWork().list(courseId=self.id).execute()
-        if assignments_packed != {}:
-            assignments = assignments_packed['courseWork']
-            return assignments
+        if self.assignments_cached() == False:
+            assignments_packed = self.service.courses().courseWork().list(courseId=self.id).execute()
+            if assignments_packed != {}:
+                assignments = assignments_packed['courseWork']
+                return assignments
+            else:
+                print('Found No Assignments')
+                return None
         else:
-            return None
+            assignments = []
+            print('Found Cache')
+            f = []
+            for (dirpath, dirnames, filenames) in os.walk(course_dir):
+                f.extend(filenames)
+                for file in f:
+                    assignment_filename = os.path.join(dir, 'cache', 'assignments', f'{self.id}', f'{file}')
+                    with open(assignment_filename, 'r') as jsonfile:
+                        assignments.append(json.load(jsonfile))
+            return assignments
+
+    def assignments_cached(self):
+        dir = os.path.dirname(os.path.realpath(__file__))
+        course_dir = os.path.join(dir, 'cache', 'assignments', f'{self.id}')
+        if os.path.exists(course_dir):
+            #todo: check if cache recent
+            return True
+        else:
+            return False
+
+
+    def cache_all_assignments(self):
+        dir = os.path.dirname(os.path.realpath(__file__))
+        course_dir = os.path.join(dir, 'cache', 'assignments', f'{self.id}')
+        if not os.path.exists(course_dir):
+            os.mkdir(course_dir)
+        if self.assignments is None:
+            pass
+        else:
+            for assignment in self.assignments:
+                filename = os.path.join(dir, 'cache', 'assignments', f'{self.id}', f'{assignment["id"]}.json')
+                with open(filename, 'w') as jsonfile:
+                    json.dump(assignment, jsonfile)
+
 
     def get_submissions(self, assignmentId):
         print('getting submissions')
