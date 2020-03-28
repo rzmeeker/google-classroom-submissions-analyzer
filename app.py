@@ -9,14 +9,20 @@ print('got courses')
 
 submission_count_dict = {}
 
-def add_count(user, submitted, course):
+def add_count(user, submitted, course, assignmentName):
     if user not in submission_count_dict.keys():
         submission_count_dict[user] = {'name': get_user_email_from_id(user),
                                        'complete': 0,
                                        'max': 0,
-                                       'courses': []}
+                                       'courses': [],
+                                       'completed assignments': [],
+                                       'missing assignments': []}
     if course not in submission_count_dict[user]['courses']:
         submission_count_dict[user]['courses'].append(course)
+    if submitted == 1:
+        submission_count_dict[user]['completed assignments'].append(assignmentName)
+    if submitted == 0:
+        submission_count_dict[user]['missing assignments'].append(assignmentName)
     submission_count_dict[user]['complete'] += submitted
     submission_count_dict[user]['max'] += 1
 
@@ -46,16 +52,16 @@ for course in abelCourses:
         for a in course.assignments:
             for s in a.submissions:
                 if s.state == 'TURNED_IN' or s.state == 'RETURNED':
-                    add_count(user=s.studentId, submitted=1, course=course.name)
+                    add_count(user=s.studentId, submitted=1, course=course.name, assignmentName=a.title)
                 else:
-                    add_count(user=s.studentId, submitted=0, course=course.name)
+                    add_count(user=s.studentId, submitted=0, course=course.name, assignmentName=a.title)
 
 
 
 dir = os.path.dirname(os.path.realpath(__file__))
 filename = os.path.join(dir, 'output', f'{teacherEmail}.csv')
 with open(filename, 'w', newline='') as csvfile:
-    fieldnames = ['name', 'complete', 'max', 'percent done', 'courses']
+    fieldnames = ['name', 'complete', 'max', 'percent done', 'courses', 'missing assignments', 'completed assignments']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writeheader()
     sorted_students = sort_submission_count_dict(submission_count_dict)
