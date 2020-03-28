@@ -10,6 +10,8 @@ class Assignment:
         self.id = str(assignmentId)
         self.service = Assignment.classroom_service
         self.json = self.get_json()
+        self.courseId = self.json['courseId']
+        self.submissions = self.get_submissions()
 
 
     def get_json(self):
@@ -33,3 +35,10 @@ class Assignment:
                     return os.path.join(root, name)
         print(f'Assignment {self.id}: Not found in cache')
         return False
+
+    def get_submissions(self):
+        print('getting submissions')
+        studentSubmissions = self.service.courses().courseWork().studentSubmissions().list(courseId=self.courseId,
+                                                                                      courseWorkId=self.id).execute()
+        submissions = studentSubmissions['studentSubmissions']
+        return submissions

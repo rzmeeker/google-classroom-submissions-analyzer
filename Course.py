@@ -63,14 +63,6 @@ class Course:
                     json.dump(assignment, jsonfile)
 
 
-    def get_submissions(self, assignmentId):
-        print('getting submissions')
-        studentSubmissions = self.service.courses().courseWork().studentSubmissions().list(courseId=self.id,
-                                                                                      courseWorkId=assignmentId).execute()
-        submissions = studentSubmissions['studentSubmissions']
-        return submissions
-
-
     def is_cached(self):
         dir = os.path.dirname(os.path.realpath(__file__))
         filename = os.path.join(dir, 'cache', 'courses', f'{self.id}.json')
