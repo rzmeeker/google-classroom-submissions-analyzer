@@ -1,0 +1,66 @@
+from service import get_classroom_service
+from Directory import get_user_email_from_id
+import os
+import json
+
+class Course:
+
+    classroom_service = get_classroom_service()
+
+    def __init__(self, courseId):
+        self.id = courseId
+        self.service = Course.classroom_service
+        self.json = self.get_json()
+        self.name = self.json['name']
+        self.assignments = self.get_assignments()
+
+
+    def get_assignments(self):
+        print('getting assignments')
+        assignments_packed = self.service.courses().courseWork().list(courseId=self.id).execute()
+        if assignments_packed != {}:
+            assignments = assignments_packed['courseWork']
+            return assignments
+        else:
+            return None
+
+    def get_submissions(self, assignmentId):
+        print('getting submissions')
+        studentSubmissions = self.service.courses().courseWork().studentSubmissions().list(courseId=self.id,
+                                                                                      courseWorkId=assignmentId).execute()
+        submissions = studentSubmissions['studentSubmissions']
+        return submissions
+
+
+    def is_cached(self):
+        dir = os.path.dirname(os.path.realpath(__file__))
+        filename = os.path.join(dir, 'cache', 'courses', f'{self.id}.json')
+        if os.path.exists(filename):
+            return True
+        else:
+            return False
+
+    def save_to_cache(self):
+        dir = os.path.dirname(os.path.realpath(__file__))
+        filename = os.path.join(dir, 'cache', 'courses', f'{self.id}.json')
+        with open(filename, 'w') as jsonfile:
+            json.dump(self.json, jsonfile)
+
+    def get_json(self):
+        if self.is_cached():
+            dir = os.path.dirname(os.path.realpath(__file__))
+            filename = os.path.join(dir, 'cache', 'courses', f'{self.id}.json')
+            with open(filename, 'r') as jsonfile:
+                return json.load(jsonfile)
+        else:
+            return self.service.courses().get(id=self.id).execute()
+
+    @classmethod
+    def get_teachers_courses(cls, teacherEmail):
+        out_courses = []
+        results = cls.classroom_service.courses().list(teacherId=teacherEmail, courseStates='ACTIVE').execute()
+        courses = results['courses']
+        for course in courses:
+            print(f"Found Course: {course['id']}")
+            out_courses.append(Course(course['id']))
+        return out_courses
