@@ -61,6 +61,7 @@ class Course:
                 filename = os.path.join(dir, 'cache', 'assignments', f'{self.id}', f'{assignment["id"]}.json')
                 with open(filename, 'w') as jsonfile:
                     json.dump(assignment, jsonfile)
+        self.assignments = self.get_assignments()
 
 
     def is_cached(self):
