@@ -28,9 +28,8 @@ class Assignment:
         dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'cache', 'assignments')
         for root, dirs, files in os.walk(dir):
             for name in files:
-                print(name)
                 if self.id in name:
                     print(f'Found cached as {name}')
                     return os.path.join(root, name)
-        print('Not found in cache')
+        print(f'Assignment {self.id}: Not found in cache')
         return False

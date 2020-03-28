@@ -2,14 +2,14 @@ from service import get_classroom_service
 from Directory import get_user_email_from_id
 import os
 import json
-import Assignment
+from Assignment import Assignment
 
 class Course:
 
     classroom_service = get_classroom_service()
 
     def __init__(self, courseId):
-        self.id = courseId
+        self.id = str(courseId)
         self.service = Course.classroom_service
         self.json = self.get_json()
         self.name = self.json['name']
@@ -30,14 +30,13 @@ class Course:
                 return None
         else:
             assignments = []
-            print('Found Cache')
+            print(f'Found Cache for Course: {self.id}')
             f = []
             for (dirpath, dirnames, filenames) in os.walk(course_dir):
                 f.extend(filenames)
                 for file in f:
-                    assignment_filename = os.path.join(dir, 'cache', 'assignments', f'{self.id}', f'{file}')
-                    with open(assignment_filename, 'r') as jsonfile:
-                        assignments.append(json.load(jsonfile))
+                    withoutExtension = file.split('.')[0]
+                    assignments.append(Assignment(withoutExtension))
             return assignments
 
     def assignments_cached(self):
