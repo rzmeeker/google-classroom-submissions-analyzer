@@ -9,11 +9,14 @@ print('got courses')
 
 submission_count_dict = {}
 
-def add_count(user, submitted):
+def add_count(user, submitted, course):
     if user not in submission_count_dict.keys():
         submission_count_dict[user] = {'name': get_user_email_from_id(user),
                                        'complete': 0,
-                                       'max': 0}
+                                       'max': 0,
+                                       'courses': []}
+    if course not in submission_count_dict[user]['courses']:
+        submission_count_dict[user]['courses'].append(course)
     submission_count_dict[user]['complete'] += submitted
     submission_count_dict[user]['max'] += 1
 
@@ -21,6 +24,7 @@ def sort_submission_count_dict(d):
     student_list = []
     for k, v in d.items():
         d[k]['percent done'] = v['complete'] / v['max']*100
+        d[k]['courses'] = f'{" ".join(str(x) for x in d[k]["courses"])}'
         student_list.append(d[k])
     out_list = sorted(student_list, key=itemgetter('percent done', 'name'))
     return out_list
@@ -42,16 +46,16 @@ for course in abelCourses:
         for a in course.assignments:
             for s in a.submissions:
                 if s.state == 'TURNED_IN' or s.state == 'RETURNED':
-                    add_count(user=s.studentId, submitted=1)
+                    add_count(user=s.studentId, submitted=1, course=course.name)
                 else:
-                    add_count(user=s.studentId, submitted=0)
+                    add_count(user=s.studentId, submitted=0, course=course.name)
 
 
 
 dir = os.path.dirname(os.path.realpath(__file__))
 filename = os.path.join(dir, 'output', f'{teacherEmail}.csv')
 with open(filename, 'w', newline='') as csvfile:
-    fieldnames = ['name', 'complete', 'max', 'percent done']
+    fieldnames = ['name', 'complete', 'max', 'percent done', 'courses']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writeheader()
     sorted_students = sort_submission_count_dict(submission_count_dict)
