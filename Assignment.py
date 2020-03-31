@@ -42,9 +42,13 @@ class Assignment:
         print('getting submissions')
         studentSubmissions = self.service.courses().courseWork().studentSubmissions().list(courseId=self.courseId,
                                                                                       courseWorkId=self.id).execute()
-        submissions_list = studentSubmissions['studentSubmissions']
-        submissions = []
-        for s in submissions_list:
-            if s['state'] != 'NEW':
-                submissions.append(Submission(s))
-        return submissions
+        if 'studentSubmissions' in studentSubmissions.keys():
+            submissions_list = studentSubmissions['studentSubmissions']
+            submissions = []
+            for s in submissions_list:
+                if s['state'] != 'NEW':
+                    submissions.append(Submission(s))
+            return submissions
+        else:
+            print(studentSubmissions)
+            return None
