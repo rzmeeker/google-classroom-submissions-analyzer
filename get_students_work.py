@@ -3,7 +3,7 @@ from Directory import get_user_email_from_id
 import csv, os
 from operator import itemgetter
 
-def add_count(user, submitted, course, assignmentName):
+def add_count(user, submitted, course, assignmentName, submission_count_dict):
     if user not in submission_count_dict.keys():
         submission_count_dict[user] = {'name': get_user_email_from_id(user),
                                        'complete': 0,
@@ -19,6 +19,7 @@ def add_count(user, submitted, course, assignmentName):
         submission_count_dict[user]['missing assignments'].append(assignmentName)
     submission_count_dict[user]['complete'] += submitted
     submission_count_dict[user]['max'] += 1
+    return submission_count_dict
 
 def sort_submission_count_dict(d):
     student_list = []
@@ -51,9 +52,9 @@ def main():
             for a in course.assignments:
                 for s in a.submissions:
                     if s.state == 'TURNED_IN' or s.state == 'RETURNED':
-                        add_count(user=s.studentId, submitted=1, course=course.name, assignmentName=a.title)
+                        submission_count_dict = add_count(user=s.studentId, submitted=1, course=course.name, assignmentName=a.title, submission_count_dict=submission_count_dict)
                     else:
-                        add_count(user=s.studentId, submitted=0, course=course.name, assignmentName=a.title)
+                        submission_count_dict = add_count(user=s.studentId, submitted=0, course=course.name, assignmentName=a.title, submission_count_dict=submission_count_dict)
 
 
 
