@@ -1,3 +1,5 @@
+from googleapiclient.errors import HttpError
+
 from Course import Course
 from Directory import get_user_email_from_id
 import csv, os
@@ -31,8 +33,7 @@ def sort_submission_count_dict(d):
     return out_list
 
 
-def main():
-    teacherEmail = 'ericsieja@springfield-schools.org'
+def main(teacherEmail):
     abelCourses = Course.get_teachers_courses(teacherEmail=teacherEmail)
     print('got courses')
 
@@ -50,12 +51,15 @@ def main():
             else:
                 print(f'Assignments already cached for {course.name}')
             for a in course.assignments:
-                for s in a.submissions:
-                    if s.state == 'TURNED_IN' or s.state == 'RETURNED':
-                        submission_count_dict = add_count(user=s.studentId, submitted=1, course=course.name, assignmentName=a.title, submission_count_dict=submission_count_dict)
-                    else:
-                        submission_count_dict = add_count(user=s.studentId, submitted=0, course=course.name, assignmentName=a.title, submission_count_dict=submission_count_dict)
-
+                if a.submissions is not None:
+                    for s in a.submissions:
+                        try:
+                            if s.state == 'TURNED_IN' or s.state == 'RETURNED':
+                                submission_count_dict = add_count(user=s.studentId, submitted=1, course=course.name, assignmentName=a.title, submission_count_dict=submission_count_dict)
+                            else:
+                                submission_count_dict = add_count(user=s.studentId, submitted=0, course=course.name, assignmentName=a.title, submission_count_dict=submission_count_dict)
+                        except HttpError:
+                            continue
 
 
     dir = os.path.dirname(os.path.realpath(__file__))
@@ -70,4 +74,4 @@ def main():
     return filename
 
 if __name__ == "__main__":
-    main()
+    main('angelinaulrich@springfield-schools.org')
