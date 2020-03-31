@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template, redirect
-from get_students_work import main
+import get_students_work
+import Drive
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -7,7 +8,9 @@ def form():
     if request.method == "POST":
         req = request.form
         email = req['email']
-
+        file = get_students_work.main(teacherEmail=email)
+        fileId = Drive.upload(file, email)
+        Drive.share(fileId=fileId, role='reader', email=email)
         return redirect(f'/processing/{email}')
     return render_template("form.html")
 
