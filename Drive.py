@@ -12,6 +12,7 @@ def upload(file, email):
                                         media_body=media,
                                         fields='id').execute()
     print('File ID: %s' % file.get('id'))
+    return file.get('id')
 
 
 def share(fileId, role, email):
