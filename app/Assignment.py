@@ -1,7 +1,7 @@
-from service import get_classroom_service
+from app.service import get_classroom_service
 import os
 import json
-from Submission import Submission
+from app.Submission import Submission
 
 class Assignment:
 

@@ -1,6 +1,5 @@
 from flask import Flask, request, render_template, redirect
-import get_students_work
-import Drive
+from app import get_students_work, Drive
 from multiprocessing import Process
 
 app = Flask(__name__)

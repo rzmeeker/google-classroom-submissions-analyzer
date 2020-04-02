@@ -1,6 +1,5 @@
-from service import get_classroom_service
-from Directory import get_user_email_from_id
-from pprint import pprint
+from app.service import get_classroom_service
+from app.Directory import get_user_email_from_id
 
 
 def get_all_courses(service):

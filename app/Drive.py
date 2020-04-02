@@ -1,5 +1,5 @@
 from googleapiclient.discovery import MediaFileUpload
-from service import get_drive_service
+from app.service import get_drive_service
 
 
 drive_service = get_drive_service()

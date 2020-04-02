@@ -1,7 +1,7 @@
 from googleapiclient.errors import HttpError
 
-from Course import Course
-from Directory import get_user_email_from_id
+from app.Course import Course
+from app.Directory import get_user_email_from_id
 import csv, os
 from operator import itemgetter
 

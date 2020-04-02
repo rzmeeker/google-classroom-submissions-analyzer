@@ -1,5 +1,5 @@
 from googleapiclient.errors import HttpError
-from service import get_directory_service
+from app.service import get_directory_service
 
 service = get_directory_service()
 

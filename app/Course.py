@@ -1,8 +1,7 @@
-from service import get_classroom_service
-from Directory import get_user_email_from_id
+from app.service import get_classroom_service
 import os
 import json
-from Assignment import Assignment
+from app.Assignment import Assignment
 
 class Course:
 
