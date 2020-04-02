@@ -30,3 +30,9 @@ mv /var/www/gcs/gcs.conf /etc/httpd/conf.d/$FQDNnoWWW.conf
 sed -i 's/ example.com/$FQDNnoWWW/g' /etc/httpd/conf.d/$FQDNnoWWW.conf
 sed -i 's/www.example.com/$FQDN/g' /etc/httpd/conf.d/$FQDNnoWWW.conf
 systemctl restart httpd
+
+cd /var/www/gcs
+source bin/activate
+pip install requirements.txt
+
+systemctl restart httpd
