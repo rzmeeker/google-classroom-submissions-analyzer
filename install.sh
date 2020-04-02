@@ -27,8 +27,8 @@ mv /var/www/gcs/ssl-params.conf /etc/httpd/conf.d/ssl-params.conf
 systemctl reload httpd
 /usr/local/bin/certbot-auto certonly --agree-tos --email $email --webroot -w /var/lib/letsencrypt/ -d $FQDNnoWWW -d $FQDN
 mv /var/www/gcs/gcs.conf /etc/httpd/conf.d/$FQDNnoWWW.conf
-sed -i 's/ example.com/$FQDNnoWWW/g' /etc/httpd/conf.d/$FQDNnoWWW.conf
-sed -i 's/www.example.com/$FQDN/g' /etc/httpd/conf.d/$FQDNnoWWW.conf
+sed -i "s/ example.com/$FQDNnoWWW/g" /etc/httpd/conf.d/$FQDNnoWWW.conf
+sed -i "s/www.example.com/$FQDN/g" /etc/httpd/conf.d/$FQDNnoWWW.conf
 systemctl restart httpd
 
 cd /var/www/gcs
