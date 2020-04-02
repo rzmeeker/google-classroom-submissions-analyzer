@@ -5,6 +5,10 @@ read FQDNnoWWW
 echo Please input the admin email contact for this server such as admin@domain.com:
 read email
 
+firewall-cmd --add-port=80/tcp --permanent
+firewall-cmd --add-port=443/tcp --permanent
+firewall-cmd --reload
+
 yum -y install httpd git openssl mod_ssl
 systemctl start httpd
 yum -y install mod_wsgi
@@ -26,10 +30,14 @@ mv /var/www/gcs/letsencrpyt.conf /etc/httpd/conf.d/letsencrypt.conf
 mv /var/www/gcs/ssl-params.conf /etc/httpd/conf.d/ssl-params.conf
 systemctl reload httpd
 /usr/local/bin/certbot-auto certonly --agree-tos --email $email --webroot -w /var/lib/letsencrypt/ -d $FQDNnoWWW -d $FQDN
-mv /var/www/gcs/gcs.conf /etc/httpd/conf.d/$FQDNnoWWW.conf
-sed -i "s/ example.com/$FQDNnoWWW/g" /etc/httpd/conf.d/$FQDNnoWWW.conf
-sed -i "s/www.example.com/$FQDN/g" /etc/httpd/conf.d/$FQDNnoWWW.conf
+mv /var/www/gcs/gcs.conf /etc/httpd/conf.d/$FQDNnoWWW.conf.example
+sed -i "s/ example.com/$FQDNnoWWW/g" /etc/httpd/conf.d/$FQDNnoWWW.conf.example > /etc/httpd/conf.d/$FQDNnoWWW.conf.tmp
+sed -i "s/www.example.com/$FQDN/g" /etc/httpd/conf.d/$FQDNnoWWW.conf.tmp > /etc/httpd/conf.d/$FQDNnoWWW.conf
+rm /etc/httpd/conf.d/$FQDNnoWWW.conf.tmp
 systemctl restart httpd
+
+setenforce 0
+
 
 cd /var/www/gcs
 source bin/activate
