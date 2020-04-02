@@ -1,4 +1,4 @@
-echo Please input this server's FQDN such as www.example.com:
+echo Please input this servers FQDN such as www.example.com:
 read FQDN
 echo Please input the FQDN again without www such as example.com:
 read FQDNnoWWW
