@@ -42,9 +42,11 @@ systemctl restart httpd
 setenforce 0
 
 
+cd /var/www
+virtualenv --python=python3 gcs
 cd /var/www/gcs
 source bin/activate
-pip install requirements.txt
+pip install -r requirements.txt
 
 chown -R apache:apache /var/www
 systemctl restart httpd
