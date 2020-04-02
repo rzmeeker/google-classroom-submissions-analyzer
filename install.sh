@@ -5,9 +5,9 @@ read FQDNnoWWW
 echo Please input the admin email contact for this server such as admin@domain.com:
 read email
 
-yum install httpd git openssl mod_ssl
+yum -y install httpd git openssl mod_ssl
 systemctl start httpd
-yum instaall mod_wsgi
+yum -y install mod_wsgi
 systemctl restart httpd
 pip3 install virtualenv
 cd /var/www
