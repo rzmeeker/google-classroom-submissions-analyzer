@@ -26,8 +26,11 @@ openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
 mkdir -p /var/lib/letsencrypt/.well-known
 chgrp apache /var/lib/letsencrypt
 chmod g+s /var/lib/letsencrypt
-mv /var/www/gcs/letsencrpyt.conf /etc/httpd/conf.d/letsencrypt.conf
+mv /var/www/gcs/letsencrypt.conf /etc/httpd/conf.d/letsencrypt.conf
 mv /var/www/gcs/ssl-params.conf /etc/httpd/conf.d/ssl-params.conf
+sed -i "s/ example.com/$FQDNnoWWW/g" /var/www/gcs/challenge-server.conf > /var/www/gcs/challenge-server.conf.tmp
+sed -i "s/www.example.com/$FQDN/g" /var/www/gcs/challenge-server.conf.tmp > /etc/httpd/conf.d/$FQDNnoWWW.conf
+rm /var/www/gcs/challenge-server.conf.tmp
 systemctl reload httpd
 /usr/local/bin/certbot-auto certonly --agree-tos --email $email --webroot -w /var/lib/letsencrypt/ -d $FQDNnoWWW -d $FQDN
 mv /var/www/gcs/gcs.conf /etc/httpd/conf.d/$FQDNnoWWW.conf.example
