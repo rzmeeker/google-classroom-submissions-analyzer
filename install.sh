@@ -33,9 +33,9 @@ sed -i "s/www.example.com/$FQDN/g" /var/www/gcs/challenge-server.conf.tmp > /etc
 rm /var/www/gcs/challenge-server.conf.tmp
 systemctl reload httpd
 /usr/local/bin/certbot-auto certonly --agree-tos --email $email --webroot -w /var/lib/letsencrypt/ -d $FQDNnoWWW -d $FQDN
-mv /var/www/gcs/gcs.conf /etc/httpd/conf.d/$FQDNnoWWW.conf.example
-sed -i "s/ example.com/$FQDNnoWWW/g" /etc/httpd/conf.d/$FQDNnoWWW.conf.example > /etc/httpd/conf.d/$FQDNnoWWW.conf.tmp
-sed -i "s/www.example.com/$FQDN/g" /etc/httpd/conf.d/$FQDNnoWWW.conf.tmp > /etc/httpd/conf.d/$FQDNnoWWW.conf
+cp /var/www/gcs/gcs.conf /etc/httpd/conf.d/$FQDNnoWWW.conf.example
+sed -i "s/ example.com/$FQDNnoWWW/g" /etc/httpd/conf.d/$FQDNnoWWW.conf.example | tee /etc/httpd/conf.d/$FQDNnoWWW.conf.tmp
+sed -i "s/www.example.com/$FQDN/g" /etc/httpd/conf.d/$FQDNnoWWW.conf.tmp | tee /etc/httpd/conf.d/$FQDNnoWWW.conf
 rm /etc/httpd/conf.d/$FQDNnoWWW.conf.tmp
 systemctl restart httpd
 
