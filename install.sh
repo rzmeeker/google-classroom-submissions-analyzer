@@ -28,15 +28,16 @@ chgrp apache /var/lib/letsencrypt
 chmod g+s /var/lib/letsencrypt
 mv /var/www/gcs/letsencrypt.conf /etc/httpd/conf.d/letsencrypt.conf
 mv /var/www/gcs/ssl-params.conf /etc/httpd/conf.d/ssl-params.conf
-sed -i "s/ example.com/$FQDNnoWWW/g" /var/www/gcs/challenge-server.conf > /var/www/gcs/challenge-server.conf.tmp
+sed -i "s/ example.com/ $FQDNnoWWW/g" /var/www/gcs/challenge-server.conf > /var/www/gcs/challenge-server.conf.tmp
 sed -i "s/www.example.com/$FQDN/g" /var/www/gcs/challenge-server.conf.tmp > /etc/httpd/conf.d/$FQDNnoWWW.conf
 rm /var/www/gcs/challenge-server.conf.tmp
 systemctl reload httpd
 /usr/local/bin/certbot-auto certonly --agree-tos --email $email --webroot -w /var/lib/letsencrypt/ -d $FQDNnoWWW -d $FQDN
-cp /var/www/gcs/gcs.conf /etc/httpd/conf.d/$FQDNnoWWW.conf.example
-sed -i "s/ example.com/$FQDNnoWWW/g" /etc/httpd/conf.d/$FQDNnoWWW.conf.example | tee /etc/httpd/conf.d/$FQDNnoWWW.conf.tmp
-sed -i "s/www.example.com/$FQDN/g" /etc/httpd/conf.d/$FQDNnoWWW.conf.tmp | tee /etc/httpd/conf.d/$FQDNnoWWW.conf
-rm /etc/httpd/conf.d/$FQDNnoWWW.conf.tmp
+cp /var/www/gcs/gcs.conf /etc/httpd/conf.d/$FQDNnoWWW.conf
+sed -i "s/ example.com/ $FQDNnoWWW/g" /etc/httpd/conf.d/$FQDNnoWWW.conf
+sed -i "s/https:\/\/example.com/https:\/\/$FQDNnoWWW/g" /etc/httpd/conf.d/$FQDNnoWWW.conf
+sed -i "s/www.example.com/$FQDN/g" /etc/httpd/conf.d/$FQDNnoWWW.conf
+sed -i "s/example.com/$FQDNnoWWW/g" /etc/httpd/conf.d/$FQDNnoWWW.conf
 systemctl restart httpd
 
 setenforce 0
@@ -47,6 +48,10 @@ virtualenv --python=python3 gcs
 cd /var/www/gcs
 source bin/activate
 pip install -r requirements.txt
+
+chown -R gcs:gcs /var/www
+su gcs
+python wsgi.py
 
 chown -R apache:apache /var/www
 systemctl restart httpd
