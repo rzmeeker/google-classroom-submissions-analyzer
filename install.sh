@@ -49,9 +49,11 @@ cd /var/www/gcs
 source bin/activate
 pip install -r requirements.txt
 
+mv /home/gcs/credentials.json /var/www/gcs/credentials.json
+
 chown -R gcs:gcs /var/www
 su gcs
 python wsgi.py
-
+sudo su root
 chown -R apache:apache /var/www
 systemctl restart httpd
