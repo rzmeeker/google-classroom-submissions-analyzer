@@ -35,4 +35,5 @@ cd /var/www/gcs
 source bin/activate
 pip install requirements.txt
 
+chown -R apache:apache /var/www
 systemctl restart httpd
