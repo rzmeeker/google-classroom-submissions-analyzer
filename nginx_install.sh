@@ -105,3 +105,7 @@ pip install uwsgi
 systemctl restart app
 systemctl restart nginx
 
+
+#create cache cleanup cron job
+touch /var/spool/cron/root
+echo "0 4 * * * /var/www/gcs/cache_cleanup.sh" >> /var/spool/cron/root
