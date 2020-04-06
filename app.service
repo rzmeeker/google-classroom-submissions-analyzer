@@ -1,0 +1,13 @@
+[Unit]
+Description=uWSGI instance to serve app
+After=network.target
+
+[Service]
+User=nginx
+Group=nginx
+WorkingDirectory=/var/www/gcs
+Environment="PATH=/var/www/gcs/bin"
+ExecStart=/var/www/gcs/bin/uwsgi --ini app.ini
+
+[Install]
+WantedBy=multi-user.target

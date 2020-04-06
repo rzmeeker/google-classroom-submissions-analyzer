@@ -1,3 +1,5 @@
+#!/bin/bash
+#apache version
 echo Please input this servers FQDN such as www.example.com:
 read FQDN
 echo Please input the FQDN again without www such as example.com:
