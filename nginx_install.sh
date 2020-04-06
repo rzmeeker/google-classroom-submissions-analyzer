@@ -29,7 +29,7 @@ systemctl enable nginx
 #create virtualenv
 pip3 install virtualenv
 cd /var/www
-git clone http://10.16.8.87/it/google-classroom.git gcs
+git clone https://github.com/rzmeeker/google-classroom-submissions-analyzer gcs
 virtualenv --python=python3 gcs
 cd /var/www/gcs
 source bin/activate
