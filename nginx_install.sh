@@ -89,5 +89,6 @@ systemctl restart nginx
 chown -R gcs:gcs /var/www/gcs
 su -s /bin/bash -c "python wsgi.py" -g gcs gcs
 chown -R nginx:nginx /var/www
+systemctl restart app
 systemctl restart nginx
 
