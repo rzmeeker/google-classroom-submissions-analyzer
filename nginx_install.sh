@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #nginx version
-creds = /home/gcs/credentials.json
+creds=/home/gcs/credentials.json
 if test -f "$creds"
 then
     echo "Credentials Found"
@@ -34,7 +34,6 @@ virtualenv --python=python3 gcs
 cd /var/www/gcs
 source bin/activate
 pip install -r requirements.txt
-pip install uWSGI
 mv /home/gcs/credentials.json /var/www/gcs/credentials.json
 
 #generate SSL cert
@@ -87,8 +86,11 @@ systemctl restart nginx
 ###########
 
 chown -R gcs:gcs /var/www/gcs
-su -s /bin/bash -c "python wsgi.py" -g gcs gcs
+su -s /bin/bash -c "python auth.py" -g gcs gcs
 chown -R nginx:nginx /var/www
+cd /var/www/gcs
+source bin/activate
+pip install uwsgi
 systemctl restart app
 systemctl restart nginx
 
