@@ -52,7 +52,7 @@ mv /var/www/gcs/ssl-params.conf /etc/nginx/snippets/ssl.conf
 
 
 if [ "$FQDN" == "$FQDNnoWWW" ]; then
-    mv /var/www/gcs/nginx_letsencrypt.conf /etc/nginx/conf.d/$FQDNnoWWW.conf
+    mv /var/www/gcs/nginx_letsencrypt_sameurl.conf /etc/nginx/conf.d/$FQDNnoWWW.conf
     sed -i "s/example.com/$FQDNnoWWW/g" /etc/nginx/conf.d/$FQDNnoWWW.conf
     /usr/local/bin/certbot-auto certonly --agree-tos --email $email --webroot -w /var/lib/letsencrypt/ -d $FQDNnoWWW
 else
