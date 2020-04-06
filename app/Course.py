@@ -13,9 +13,10 @@ class Course:
         self.service = Course.classroom_service
         self.json = self.get_json()
         self.name = self.json['name']
-        self.assignments = self.get_assignments()
-        self.teacherID = self.json['OwnerId']
+        self.teacherID = self.json['ownerId']
         self.teacherEmail = get_user_email_from_id(self.teacherID)
+        self.assignments = self.get_assignments()
+
 
 
     def get_assignments(self):
