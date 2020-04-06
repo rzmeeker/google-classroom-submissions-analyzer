@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 #nginx version
-if -e /home/gcs/credentials.json
+creds = /home/gcs/credentials.json
+if test -f "$creds"
 then
     echo "Credentials Found"
 else
@@ -33,6 +34,7 @@ virtualenv --python=python3 gcs
 cd /var/www/gcs
 source bin/activate
 pip install -r requirements.txt
+pip install uWSGI
 mv /home/gcs/credentials.json /var/www/gcs/credentials.json
 
 #generate SSL cert
@@ -47,7 +49,7 @@ chgrp nginx /var/lib/letsencrypt
 chmod g+s /var/lib/letsencrypt
 mkdir /etc/nginx/snippets
 mv /var/www/gcs/letsencrypt.conf /etc/nginx/snippets/letsencrypt.conf
-mv /var/www/gcs/ssl-params.conf /etc/nginx/snippets/ssl-params.conf
+mv /var/www/gcs/ssl-params.conf /etc/nginx/snippets/ssl.conf
 mv /var/www/gcs/nginx_letsencrypt.conf /etc/nginx/conf.d/$FQDNnoWWW.conf
 sed -i "s/www.example.com/$FQDN/g" /etc/nginx/conf.d/$FQDNnoWWW.conf
 sed -i "s/example.com/$FQDNnoWWW/g" /etc/nginx/conf.d/$FQDNnoWWW.conf
@@ -58,15 +60,6 @@ sed -i "s/example.com/$FQDNnoWWW/g" /etc/nginx/conf.d/$FQDNnoWWW.conf
 setenforce 0
 sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
 
-###########
-#GUI REQUIRED!
-#Authenticating webapp with gsuite account
-###########
-
-chown -R gcs:gcs /var/www/gcs
-su -s /bin/bash -c "python wsgi.py" -g gcs gcs
-chown -R nginx:nginx /var/www
-systemctl restart nginx
 
 
 ###################
@@ -88,4 +81,13 @@ systemctl reload nginx
 systemctl restart nginx
 
 
+###########
+#GUI REQUIRED!
+#Authenticating webapp with gsuite account
+###########
+
+chown -R gcs:gcs /var/www/gcs
+su -s /bin/bash -c "python wsgi.py" -g gcs gcs
+chown -R nginx:nginx /var/www
+systemctl restart nginx
 
