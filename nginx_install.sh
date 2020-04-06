@@ -54,11 +54,15 @@ mv /var/www/gcs/ssl-params.conf /etc/nginx/snippets/ssl.conf
 if [ "$FQDN" == "$FQDNnoWWW" ]; then
     mv /var/www/gcs/nginx_letsencrypt_sameurl.conf /etc/nginx/conf.d/$FQDNnoWWW.conf
     sed -i "s/example.com/$FQDNnoWWW/g" /etc/nginx/conf.d/$FQDNnoWWW.conf
+    systemctl restart nginx
+    systemctl reload nginx
     /usr/local/bin/certbot-auto certonly --agree-tos --email $email --webroot -w /var/lib/letsencrypt/ -d $FQDNnoWWW
 else
     mv /var/www/gcs/nginx_letsencrypt.conf /etc/nginx/conf.d/$FQDNnoWWW.conf
     sed -i "s/www.example.com/$FQDN/g" /etc/nginx/conf.d/$FQDNnoWWW.conf
     sed -i "s/example.com/$FQDNnoWWW/g" /etc/nginx/conf.d/$FQDNnoWWW.conf
+    systemctl restart nginx
+    systemctl reload nginx
     /usr/local/bin/certbot-auto certonly --agree-tos --email $email --webroot -w /var/lib/letsencrypt/ -d $FQDNnoWWW -d $FQDN
 fi
 #disable selinux because I haven't figured out how to not make that break everything yet
