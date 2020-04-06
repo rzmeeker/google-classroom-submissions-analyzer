@@ -49,11 +49,18 @@ chmod g+s /var/lib/letsencrypt
 mkdir /etc/nginx/snippets
 mv /var/www/gcs/letsencrypt.conf /etc/nginx/snippets/letsencrypt.conf
 mv /var/www/gcs/ssl-params.conf /etc/nginx/snippets/ssl.conf
-mv /var/www/gcs/nginx_letsencrypt.conf /etc/nginx/conf.d/$FQDNnoWWW.conf
-sed -i "s/www.example.com/$FQDN/g" /etc/nginx/conf.d/$FQDNnoWWW.conf
-sed -i "s/example.com/$FQDNnoWWW/g" /etc/nginx/conf.d/$FQDNnoWWW.conf
-/usr/local/bin/certbot-auto certonly --agree-tos --email $email --webroot -w /var/lib/letsencrypt/ -d $FQDNnoWWW -d $FQDN
 
+
+if [ "$FQDN" == "$FQDNnoWWW" ]; then
+    mv /var/www/gcs/nginx_letsencrypt.conf /etc/nginx/conf.d/$FQDNnoWWW.conf
+    sed -i "s/example.com/$FQDNnoWWW/g" /etc/nginx/conf.d/$FQDNnoWWW.conf
+    /usr/local/bin/certbot-auto certonly --agree-tos --email $email --webroot -w /var/lib/letsencrypt/ -d $FQDNnoWWW
+else
+    mv /var/www/gcs/nginx_letsencrypt.conf /etc/nginx/conf.d/$FQDNnoWWW.conf
+    sed -i "s/www.example.com/$FQDN/g" /etc/nginx/conf.d/$FQDNnoWWW.conf
+    sed -i "s/example.com/$FQDNnoWWW/g" /etc/nginx/conf.d/$FQDNnoWWW.conf
+    /usr/local/bin/certbot-auto certonly --agree-tos --email $email --webroot -w /var/lib/letsencrypt/ -d $FQDNnoWWW -d $FQDN
+fi
 #disable selinux because I haven't figured out how to not make that break everything yet
 #If you see this comment and know how to fix it please submit a pull request
 setenforce 0
