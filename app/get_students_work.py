@@ -35,21 +35,23 @@ def sort_submission_count_dict(d):
 
 def main(teacherEmail):
     abelCourses = Course.get_teachers_courses(teacherEmail=teacherEmail)
-    print('got courses')
+    #print('got courses')
 
     submission_count_dict = {}
     for course in abelCourses:
         if course.is_cached():
-            print(course.name, 'retrieved from cache')
+            pass
+            #print(course.name, 'retrieved from cache')
         else:
             course.save_to_cache()
-            print(course.name, 'cached for next time!')
+            #print(course.name, 'cached for next time!')
         if course.assignments is not None:
             if course.assignments_cached() is False:
-                print('Caching Assignments')
+                #print('Caching Assignments')
                 course.cache_all_assignments()
             else:
-                print(f'Assignments already cached for {course.name}')
+                pass
+                #print(f'Assignments already cached for {course.name}')
             for a in course.assignments:
                 if a.submissions is not None:
                     for s in a.submissions:
@@ -74,4 +76,4 @@ def main(teacherEmail):
     return filename
 
 if __name__ == "__main__":
-    main('angelinaulrich@springfield-schools.org')
+    pass
