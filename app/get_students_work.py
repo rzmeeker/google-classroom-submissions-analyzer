@@ -4,6 +4,9 @@ from app.Course import Course
 from app.Directory import get_user_email_from_id
 import csv, os
 from operator import itemgetter
+from app.reports import *
+from datetime import timedelta, date, datetime
+from rfc3339 import rfc3339
 
 def add_count(user, submitted, course, assignmentName, submission_count_dict):
     if user not in submission_count_dict.keys():
@@ -32,6 +35,61 @@ def sort_submission_count_dict(d):
     out_list = sorted(student_list, key=itemgetter('percent done', 'name'))
     return out_list
 
+def add_meet_data_to_dict(service, student_dict, teacher_email):
+    for student in student_dict:
+        student_email = student.get('name')
+        shared_meetings = find_shared_meetings(service=service,
+                                               teacher=teacher_email,
+                                               student=student_email,
+                                               startTime=179,
+                                               endTime=-1)
+        if shared_meetings is not None:
+            student_meet_data = get_all_meet_results(service=service,
+                                                     startTime=179,
+                                                     endTime=-1,
+                                                     userKey=student_email)
+            meets_attended = []
+            for meeting_code in shared_meetings:
+                for meet in student_meet_data:
+                    params = get_meet_params_from_json(meet)
+                    if params.get('meeting_code') == meeting_code:
+                        if params.get('duration') > 600:
+                            meets_attended.append(f"{params.get('date').month}/{params.get('date').day}")
+            student['Dates Meet Attended'] = sorted(meets_attended)
+            student['Meets Attended'] = len(meets_attended)
+        else:
+            student['Dates Meet Attended'] = None
+            student['Meets Attended'] = 0
+    return student_dict
+
+
+
+def get_meet_params_from_json(meeting_dict):
+    duration = 0
+    organizer_email = None
+    meeting_code = None
+    date = None
+    time = meeting_dict.get('id').get('time')
+    day = time.split('T')[0]
+    date = datetime.strptime(day, "%Y-%m-%d").date()
+    events = meeting_dict.get('events')
+    if len(events) != 0:
+        if events[0].get('parameters'):
+            params = events[0].get('parameters')
+            for param in params:
+                if param.get('name') == 'duration_seconds':
+                    duration = int(param.get('intValue'))
+                if param.get('name') == 'organizer_email':
+                    organizer_email = param.get('value')
+                if param.get('name') == 'meeting_code':
+                    meeting_code = param.get('value')
+    meet_params = {
+        'duration': duration,
+        'organizer_email': organizer_email,
+        'meeting_code': meeting_code,
+        'date': date
+    }
+    return meet_params
 
 def main(teacherEmail):
     abelCourses = Course.get_teachers_courses(teacherEmail=teacherEmail)
@@ -63,14 +121,18 @@ def main(teacherEmail):
                         except HttpError:
                             continue
 
+    sorted_students = sort_submission_count_dict(submission_count_dict)
+    reports_service = service.get_reports_service()
+    add_meet_data_to_dict(service=reports_service,
+                          student_dict=sorted_students,
+                          teacher_email=teacherEmail)
 
     dir = os.path.dirname(os.path.realpath(__file__))
     filename = os.path.join(dir, 'output', f'{teacherEmail}.csv')
     with open(filename, 'w', newline='') as csvfile:
-        fieldnames = ['name', 'complete', 'max', 'percent done', 'courses', 'missing assignments', 'completed assignments']
+        fieldnames = ['name', 'complete', 'max', 'percent done', 'courses', 'missing assignments', 'completed assignments', 'Meets Attended', 'Dates Meet Attended']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
-        sorted_students = sort_submission_count_dict(submission_count_dict)
         for student in sorted_students:
             writer.writerow(student)
     return filename
