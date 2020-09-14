@@ -55,6 +55,11 @@ def add_meet_data_to_dict(service, student_dict, teacher_email):
                     if params.get('meeting_code') == meeting_code:
                         if params.get('duration') > 600:
                             meets_attended.append(f"{params.get('date').month}/{params.get('date').day}")
+            sorted_meets_attended = sorted(meets_attended)
+            meets_attended = []
+            for meet in sorted_meets_attended:
+                if meet not in meets_attended:
+                    meets_attended.append(meet)
             student['Dates Meet Attended'] = sorted(meets_attended)
             student['Meets Attended'] = len(meets_attended)
         else:
