@@ -36,7 +36,7 @@ def sort_submission_count_dict(d):
         d[k]['percent done'] = v['complete'] / v['max']*100
         d[k]['courses'] = f'{" ".join(str(x) for x in d[k]["courses"])}'
         student_list.append(d[k])
-    out_list = sorted(student_list, key=itemgetter('percent done', 'name'))
+    out_list = sorted(student_list, key=itemgetter('percent done', 'first', 'last'))
     return out_list
 
 def add_meet_data_to_dict(service, student_dict, teacher_email):
@@ -139,7 +139,7 @@ def main(teacherEmail):
     dir = os.path.dirname(os.path.realpath(__file__))
     filename = os.path.join(dir, 'output', f'{teacherEmail}.csv')
     with open(filename, 'w', newline='') as csvfile:
-        fieldnames = ['first', 'last', 'name', 'complete', 'max', 'percent done', 'courses', 'missing assignments', 'completed assignments', 'Meets Attended', 'Dates Meet Attended']
+        fieldnames = ['first', 'last', 'mail', 'complete', 'max', 'percent done', 'courses', 'missing assignments', 'completed assignments', 'Meets Attended', 'Dates Meet Attended']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for student in sorted_students:
