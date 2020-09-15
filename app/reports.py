@@ -1,5 +1,6 @@
 from app import service
 from googleapiclient.discovery import Resource
+from googleapiclient.errors import HttpError
 from datetime import timedelta, date, datetime
 from rfc3339 import rfc3339
 
@@ -69,22 +70,25 @@ def user_attended_meetings_with(user, meetings):
 
 
 def find_shared_meetings(service: Resource, teacher: str, student: str, startTime: int, endTime: int):
-    shared_meetings = []
-    results = get_all_meet_results(service=service,
-                                   startTime=startTime,
-                                   endTime=endTime,
-                                   userKey=teacher)
-    results2 = get_all_meet_results(service=service,
-                                    startTime=startTime,
-                                    endTime=endTime,
-                                    userKey=student)
-    meetings = get_meeting_participants(results)
-    meetings2 = get_meeting_participants(results2)
-    for meeting_code in meetings.keys():
-        if meeting_code in meetings2.keys():
-            shared_meetings.append(meeting_code)
-    if shared_meetings:
-        return shared_meetings
+    try:
+        shared_meetings = []
+        results = get_all_meet_results(service=service,
+                                       startTime=startTime,
+                                       endTime=endTime,
+                                       userKey=teacher)
+        results2 = get_all_meet_results(service=service,
+                                        startTime=startTime,
+                                        endTime=endTime,
+                                        userKey=student)
+        meetings = get_meeting_participants(results)
+        meetings2 = get_meeting_participants(results2)
+        for meeting_code in meetings.keys():
+            if meeting_code in meetings2.keys():
+                shared_meetings.append(meeting_code)
+        if shared_meetings:
+            return shared_meetings
+    except HttpError:
+        return None
     return None
 
 
