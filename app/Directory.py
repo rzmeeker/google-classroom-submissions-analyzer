@@ -9,3 +9,10 @@ def get_user_email_from_id(id):
         return result['primaryEmail']
     except HttpError:
         return 'No Longer Enrolled at Springfield Schools'
+
+def get_names_from_email(email):
+    try:
+        result = service.users().get(userKey=id).execute()
+        return result.get('name')
+    except HttpError:
+        return 'No Longer Enrolled at Springfield Schools'

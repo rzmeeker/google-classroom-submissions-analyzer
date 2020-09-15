@@ -1,7 +1,7 @@
 from googleapiclient.errors import HttpError
 
 from app.Course import Course
-from app.Directory import get_user_email_from_id
+from app.Directory import get_user_email_from_id, get_names_from_email
 import csv, os
 from operator import itemgetter
 from app.reports import *
@@ -10,7 +10,11 @@ from rfc3339 import rfc3339
 
 def add_count(user, submitted, course, assignmentName, submission_count_dict):
     if user not in submission_count_dict.keys():
-        submission_count_dict[user] = {'name': get_user_email_from_id(user),
+        mail = get_user_email_from_id(user)
+        names = get_names_from_email(mail)
+        submission_count_dict[user] = {'first': names.get('givenName'),
+                                       'last': names.get('familyName'),
+                                       'mail': mail,
                                        'complete': 0,
                                        'max': 0,
                                        'courses': [],
@@ -135,7 +139,7 @@ def main(teacherEmail):
     dir = os.path.dirname(os.path.realpath(__file__))
     filename = os.path.join(dir, 'output', f'{teacherEmail}.csv')
     with open(filename, 'w', newline='') as csvfile:
-        fieldnames = ['name', 'complete', 'max', 'percent done', 'courses', 'missing assignments', 'completed assignments', 'Meets Attended', 'Dates Meet Attended']
+        fieldnames = ['first', 'last', 'name', 'complete', 'max', 'percent done', 'courses', 'missing assignments', 'completed assignments', 'Meets Attended', 'Dates Meet Attended']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for student in sorted_students:
