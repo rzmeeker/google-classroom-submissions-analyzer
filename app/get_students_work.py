@@ -12,7 +12,6 @@ def add_count(user, submitted, course, assignmentName, submission_count_dict):
     if user not in submission_count_dict.keys():
         mail = get_user_email_from_id(user)
         names = get_names_from_email(mail)
-        print(names, type(names))
         submission_count_dict[user] = {'first': names.get('givenName'),
                                        'last': names.get('familyName'),
                                        'mail': mail,
