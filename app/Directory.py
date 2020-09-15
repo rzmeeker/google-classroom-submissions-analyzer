@@ -12,7 +12,7 @@ def get_user_email_from_id(id):
 
 def get_names_from_email(email):
     try:
-        result = service.users().get(userKey=id).execute()
+        result = service.users().get(userKey=email).execute()
         return result.get('name')
     except HttpError:
         return 'No Longer Enrolled at Springfield Schools'
