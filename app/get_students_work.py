@@ -41,7 +41,7 @@ def sort_submission_count_dict(d):
 
 def add_meet_data_to_dict(service, student_dict, teacher_email):
     for student in student_dict:
-        student_email = student.get('name')
+        student_email = student.get('mail')
         shared_meetings = find_shared_meetings(service=service,
                                                teacher=teacher_email,
                                                student=student_email,
