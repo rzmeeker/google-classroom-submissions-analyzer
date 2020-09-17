@@ -29,7 +29,8 @@ def add_count(user, submitted, course, assignmentName, submission_count_dict):
         submission_count_dict[user]['turned in assignments'].append(assignmentName)
     if submitted == 0:
         submission_count_dict[user]['missing assignments'].append(assignmentName)
-    submission_count_dict[user]['complete'] += submitted
+    if submitted == 1 or submitted == 2:
+        submission_count_dict[user]['complete'] += 1
     submission_count_dict[user]['max'] += 1
     return submission_count_dict
 
