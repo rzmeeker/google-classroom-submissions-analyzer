@@ -18,12 +18,15 @@ def add_count(user, submitted, course, assignmentName, submission_count_dict):
                                        'complete': 0,
                                        'max': 0,
                                        'courses': [],
-                                       'completed assignments': [],
+                                       'turned in assignments': [],
+                                       'returned assignments': [],
                                        'missing assignments': []}
     if course not in submission_count_dict[user]['courses']:
         submission_count_dict[user]['courses'].append(course)
+    if submitted == 2:
+        submission_count_dict[user]['returned assignments'].append(assignmentName)
     if submitted == 1:
-        submission_count_dict[user]['completed assignments'].append(assignmentName)
+        submission_count_dict[user]['turned in assignments'].append(assignmentName)
     if submitted == 0:
         submission_count_dict[user]['missing assignments'].append(assignmentName)
     submission_count_dict[user]['complete'] += submitted
@@ -123,7 +126,9 @@ def main(teacherEmail):
                 if a.submissions is not None:
                     for s in a.submissions:
                         try:
-                            if s.state == 'TURNED_IN' or s.state == 'RETURNED':
+                            if s.state == 'RETURNED':
+                                submission_count_dict = add_count(user=s.studentId, submitted=2, course=course.name, assignmentName=a.title, submission_count_dict=submission_count_dict)
+                            if s.state == 'TURNED_IN':
                                 submission_count_dict = add_count(user=s.studentId, submitted=1, course=course.name, assignmentName=a.title, submission_count_dict=submission_count_dict)
                             else:
                                 submission_count_dict = add_count(user=s.studentId, submitted=0, course=course.name, assignmentName=a.title, submission_count_dict=submission_count_dict)
@@ -139,7 +144,7 @@ def main(teacherEmail):
     dir = os.path.dirname(os.path.realpath(__file__))
     filename = os.path.join(dir, 'output', f'{teacherEmail}.csv')
     with open(filename, 'w', newline='') as csvfile:
-        fieldnames = ['first', 'last', 'mail', 'complete', 'max', 'percent done', 'courses', 'missing assignments', 'completed assignments', 'Meets Attended', 'Dates Meet Attended']
+        fieldnames = ['first', 'last', 'mail', 'complete', 'max', 'percent done', 'courses', 'missing assignments', 'turned in assignments', 'returned assignments', 'Meets Attended', 'Dates Meet Attended']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for student in sorted_students:
