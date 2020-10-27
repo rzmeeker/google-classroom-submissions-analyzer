@@ -14,7 +14,8 @@ def form():
             primary_only = True
         else:
             primary_only = False
-        background_process = Process(target=check_upload_share, daemon=True, args=(email,primary_only))
+        print(email, primary_only)
+        background_process = Process(target=check_upload_share, daemon=True, args=(email, primary_only))
         background_process.start()
         return redirect(f'/processing/{email}')
     return render_template("form.html")
@@ -24,7 +25,7 @@ def form():
 def checkbox_test():
     if request.method == "POST":
         req = request.form
-        return f'{req.get("email"), req.get("form")}'
+        return f'{req.get("email"), req.get("primary_only")}'
     return render_template('form.html')
 
 @app.route('/processing/<email>')
