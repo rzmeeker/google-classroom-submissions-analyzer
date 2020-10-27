@@ -10,6 +10,7 @@ def form():
         req = request.form
         email = req['email']
         primary_only = req.get('primary_only')
+        print(email, primary_only)
         if primary_only:
             primary_only = True
         else:
