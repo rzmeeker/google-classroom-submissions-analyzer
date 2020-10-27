@@ -100,7 +100,10 @@ class Course:
         for course in courses:
             print(f"Found Course: {course['id']} for {teacherEmail}")
             result_courses.append(Course(course['id']))
-        for course in result_courses:
-            if course.teacherID == teacherId:
-                out_courses.append(course)
+        if primary_only:
+            for course in result_courses:
+                if course.teacherID == teacherId:
+                    out_courses.append(course)
+        else:
+            out_courses = result_courses
         return out_courses
