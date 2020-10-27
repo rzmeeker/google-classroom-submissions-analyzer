@@ -91,7 +91,7 @@ class Course:
             return self.service.courses().get(id=self.id).execute()
 
     @classmethod
-    def get_teachers_courses(cls, teacherEmail, primary_only:bool=True):
+    def get_teachers_courses(cls, teacherEmail, primary_only:bool):
         teacherId = get_user_id_from_email(teacherEmail)
         out_courses = []
         result_courses = []
@@ -104,6 +104,7 @@ class Course:
             for course in result_courses:
                 if course.teacherID == teacherId:
                     out_courses.append(course)
+            return out_courses
         else:
             out_courses = result_courses
         return out_courses

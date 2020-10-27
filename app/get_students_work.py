@@ -104,7 +104,7 @@ def get_meet_params_from_json(meeting_dict):
     }
     return meet_params
 
-def main(teacherEmail, primary_only:bool = True):
+def main(teacherEmail, primary_only:bool):
     abelCourses = Course.get_teachers_courses(teacherEmail=teacherEmail, primary_only=primary_only)
     #print('got courses')
 
