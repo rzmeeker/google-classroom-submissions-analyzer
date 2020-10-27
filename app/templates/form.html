@@ -2,10 +2,18 @@
 {% block content %}
 
 <form action="/" method="POST">
-    <div class="form-group">
         <label>Email</label>
         <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email">
-    </div>
+        <div class="switch">
+            <p>Include classes where I am a co-teacher?</p>
+            <label id="primary_only">
+              No
+              <input type="checkbox">
+              <span class="lever"></span>
+              Yes
+            </label>
+        </div>
+    <br />
     <button type="submit" class="btn btn-primary">Request Data</button>
 </form>
 

@@ -2,7 +2,7 @@ from app.service import get_classroom_service
 import os
 import json
 from app.Assignment import Assignment
-from app.Directory import get_user_email_from_id
+from app.Directory import get_user_email_from_id, get_user_id_from_email
 
 class Course:
 
@@ -91,11 +91,16 @@ class Course:
             return self.service.courses().get(id=self.id).execute()
 
     @classmethod
-    def get_teachers_courses(cls, teacherEmail):
+    def get_teachers_courses(cls, teacherEmail, primary_only:bool=True):
+        teacherId = get_user_id_from_email(teacherEmail)
         out_courses = []
+        result_courses = []
         results = cls.classroom_service.courses().list(teacherId=teacherEmail, courseStates='ACTIVE').execute()
         courses = results['courses']
         for course in courses:
             print(f"Found Course: {course['id']} for {teacherEmail}")
-            out_courses.append(Course(course['id']))
+            result_courses.append(Course(course['id']))
+        for course in result_courses:
+            if course.teacherID == teacherId:
+                out_courses.append(course)
         return out_courses

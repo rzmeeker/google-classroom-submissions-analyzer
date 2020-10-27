@@ -19,3 +19,10 @@ def get_names_from_email(email):
             'givenName': 'ERROR: Could not find user',
             'familyName': 'ERROR: Could not find user',
         }
+
+def get_user_id_from_email(email):
+    try:
+        result = service.users().get(userKey=email).execute()
+        return result['id']
+    except HttpError:
+        return 'No Longer Enrolled at Springfield Schools'
