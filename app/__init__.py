@@ -37,5 +37,8 @@ def processing(email):
 def check_upload_share(email, primary_only:bool):
     print(email, primary_only)
     file = get_students_work.main(teacherEmail=email, primary_only=primary_only)
+    print("Created File")
     fileId = Drive.upload(file, email)
+    print("Uploaded file")
     Drive.share(fileId=fileId, role='reader', email=email)
+    print("shared file")
