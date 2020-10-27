@@ -19,6 +19,14 @@ def form():
         return redirect(f'/processing/{email}')
     return render_template("form.html")
 
+
+@app.route('/checkbox-test', methods=['GET', 'POST'])
+def checkbox_test():
+    if request.method == "POST":
+        req = request.form
+        return req
+    return render_template('form.html')
+
 @app.route('/processing/<email>')
 def processing(email):
     return render_template('processing.html', name=email)
