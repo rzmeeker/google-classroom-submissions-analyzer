@@ -24,7 +24,7 @@ def form():
 def checkbox_test():
     if request.method == "POST":
         req = request.form
-        return req
+        return f'{req.get("email"), req.get("form")}'
     return render_template('form.html')
 
 @app.route('/processing/<email>')
