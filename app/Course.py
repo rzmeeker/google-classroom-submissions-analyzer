@@ -93,6 +93,7 @@ class Course:
     @classmethod
     def get_teachers_courses(cls, teacherEmail, primary_only:bool):
         teacherId = get_user_id_from_email(teacherEmail)
+        print(teacherId)
         out_courses = []
         result_courses = []
         results = cls.classroom_service.courses().list(teacherId=teacherEmail, courseStates='ACTIVE').execute()
@@ -103,8 +104,9 @@ class Course:
         if primary_only:
             for course in result_courses:
                 if course.teacherID == teacherId:
+                    print(f'Adding {course.name} to output.')
                     out_courses.append(course)
+            print(out_courses)
             return out_courses
         else:
-            out_courses = result_courses
-        return out_courses
+            return result_courses
