@@ -104,7 +104,7 @@ def get_meet_params_from_json(meeting_dict):
     }
     return meet_params
 
-def main(teacherEmail, primary_only:bool):
+def main(teacherEmail, primary_only:bool, meet_data:bool):
     abelCourses = Course.get_teachers_courses(teacherEmail=teacherEmail, primary_only=primary_only)
     #print('got courses')
 
@@ -138,14 +138,19 @@ def main(teacherEmail, primary_only:bool):
 
     sorted_students = sort_submission_count_dict(submission_count_dict)
     reports_service = service.get_reports_service()
-    add_meet_data_to_dict(service=reports_service,
-                          student_dict=sorted_students,
-                          teacher_email=teacherEmail)
-
+    if meet_data:
+        add_meet_data_to_dict(service=reports_service,
+                              student_dict=sorted_students,
+                              teacher_email=teacherEmail)
+        fieldnames = ['first', 'last', 'mail', 'complete', 'max', 'percent done', 'courses', 'missing assignments',
+                      'turned in assignments', 'returned assignments', 'Meets Attended', 'Dates Meet Attended']
+    else:
+        fieldnames = ['first', 'last', 'mail', 'complete', 'max', 'percent done', 'courses', 'missing assignments',
+                      'turned in assignments', 'returned assignments']
     dir = os.path.dirname(os.path.realpath(__file__))
     filename = os.path.join(dir, 'output', f'{teacherEmail}.csv')
     with open(filename, 'w', newline='') as csvfile:
-        fieldnames = ['first', 'last', 'mail', 'complete', 'max', 'percent done', 'courses', 'missing assignments', 'turned in assignments', 'returned assignments', 'Meets Attended', 'Dates Meet Attended']
+
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for student in sorted_students:

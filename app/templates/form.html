@@ -5,7 +5,7 @@
         <label>Email</label>
         <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email">
         <div class="switch">
-            <p>Only include classes where I am the primay teacher?</p>
+            <p>Only include classes where I am the primary teacher?</p>
             <label>
               No
               <input type="checkbox" id="primary_only" name="primary_only">
@@ -13,6 +13,15 @@
               Yes
             </label>
         </div>
+        <div class="switch">
+        <p>Include Google Meet Attendance Data?</p>
+        <label>
+          No
+          <input type="checkbox" id="meet_data" name="meet_data">
+          <span class="lever"></span>
+          Yes
+        </label>
+    </div>
     <br />
     <button type="submit" class="btn btn-primary">Request Data</button>
 </form>
